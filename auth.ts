@@ -2,6 +2,7 @@ import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  trustHost: true, // Vercel과 같은 서버리스 환경에서 호스트 자동 감지
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
     GoogleProvider({
