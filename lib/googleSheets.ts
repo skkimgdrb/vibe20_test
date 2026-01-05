@@ -9,13 +9,30 @@ const CREDENTIALS_PATH = process.env.GOOGLE_APPLICATION_CREDENTIALS || './creden
  * Google Sheets API 클라이언트 초기화
  */
 async function getAuthClient() {
-  const auth = new google.auth.GoogleAuth({
-    keyFile: path.resolve(process.cwd(), CREDENTIALS_PATH),
-    scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
-  });
+  // Vercel 환경에서는 환경 변수에서 서비스 계정 키를 읽음
+  const serviceAccountKey = process.env.GOOGLE_SERVICE_ACCOUNT_KEY;
+  
+  if (serviceAccountKey) {
+    // 환경 변수에서 JSON 문자열로 저장된 경우
+    const credentials = typeof serviceAccountKey === 'string' 
+      ? JSON.parse(serviceAccountKey) 
+      : serviceAccountKey;
+    
+    const auth = new google.auth.GoogleAuth({
+      credentials,
+      scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
+    });
+    
+    return await auth.getClient();
+  } else {
+    // 로컬 개발 환경에서는 파일에서 읽음
+    const auth = new google.auth.GoogleAuth({
+      keyFile: path.resolve(process.cwd(), CREDENTIALS_PATH),
+      scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
+    });
 
-  const authClient = await auth.getClient();
-  return authClient;
+    return await auth.getClient();
+  }
 }
 
 /**
