@@ -23,7 +23,7 @@ async function getAuthClient() {
       scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
     });
     
-    return await auth.getClient();
+    return auth;
   } else {
     // 로컬 개발 환경에서는 파일에서 읽음
     const auth = new google.auth.GoogleAuth({
@@ -31,7 +31,7 @@ async function getAuthClient() {
       scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
     });
 
-    return await auth.getClient();
+    return auth;
   }
 }
 
